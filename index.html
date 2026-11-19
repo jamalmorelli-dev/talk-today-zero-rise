@@ -155,18 +155,114 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
   padding: 10px 12px 24px; overflow-y: auto; z-index: 10;
 }
 
+/* Course Book Navigation */
+.coursebook-nav {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.book-pills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+.book-pills::-webkit-scrollbar { display: none; }
+
+.book-pill {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  color: #94a3b8;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.book-pill:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.book-pill.active {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(16, 185, 129, 0.15));
+  border-color: var(--teal-neon);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+}
+.book-pill .book-icon {
+  font-size: 14px;
+}
+.book-pill .book-title {
+  font-size: 11.5px;
+  letter-spacing: 0.2px;
+}
+
+.unit-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+  padding: 3px 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.2px;
+}
+.unit-badge strong {
+  color: #f1f5f9;
+  font-weight: 700;
+}
+.unit-badge span {
+  color: var(--teal-neon);
+  font-weight: 600;
+}
+
 .set-bar {
   width: 100%; display: flex; gap: 6px; overflow-x: auto;
   padding: 2px 0 8px; scrollbar-width: none;
 }
 .set-chip {
+  position: relative;
   flex: 0 0 auto; width: 48px; height: 48px; min-height: 48px; padding: 0;
   border-radius: 14px; border: 2px solid var(--border-glass);
   background: var(--bg-surface); cursor: pointer; overflow: hidden;
+  transition: opacity 0.2s ease, filter 0.2s ease;
 }
 .set-chip img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .set-chip.active { border-color: var(--teal-neon); box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.35); }
 .set-chip.done { border-color: var(--emerald); }
+.set-chip.other-book { opacity: 0.4; filter: grayscale(0.5); }
+.set-chip.other-book:hover { opacity: 0.85; filter: grayscale(0); }
+.set-chip.in-book { opacity: 1; }
+
+.set-chip-tag {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #f8fafc;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 1px 3px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+  letter-spacing: 0.2px;
+}
 
 .prompt-line {
   font-size: 22px; font-weight: 800; text-align: center; min-height: 28px; margin: 4px 0;
@@ -556,15 +652,20 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
 /* ZERO RISE lesson engine. Pure functions. English only. No DOM. */
 const TT = {
   PICS: ['pizza', 'banana', 'taxi', 'bus', 'doctor', 'police', 'football', 'camera', 'coffee', 'tomato', 'robot', 'radio'],
+  BOOKS: [
+    { id: 'kids', name: 'Super Minds 1', code: 'SM1', series: 'Cambridge Super Minds', level: 'Kids Level Zero', icon: '📘' },
+    { id: 'teens', name: 'Gateway to the World', code: 'GTTW', series: 'Macmillan Gateway', level: 'Teens A1–A1+', icon: '🌍' },
+    { id: 'adults', name: 'Talk Keynote', code: 'KEYNOTE', series: 'National Geographic Keynote & Voices', level: 'Adults A1–A2', icon: '💼' }
+  ],
   SETS: [
-    { id: 'home', name: 'Home', words: ['door', 'window', 'cup', 'bed', 'bag', 'book'] },
-    { id: 'outside', name: 'Outside', words: ['ball', 'cat', 'dog', 'fish', 'tree', 'car'] },
-    { id: 'class', name: 'Class', words: ['apple', 'banana', 'pen', 'pencil'] },
-    { id: 'food', name: 'Food', words: ['pizza', 'burger', 'chocolate', 'tomato', 'orange', 'water'] },
-    { id: 'play', name: 'Play', words: ['football', 'tennis', 'music', 'camera', 'robot', 'radio'] },
-    { id: 'tech', name: 'Tech', words: ['headphones', 'computer', 'telephone', 'television', 'sneakers', 'backpack', 'bicycle', 'jacket'] },
-    { id: 'city', name: 'City', words: ['taxi', 'bus', 'train', 'station', 'airport', 'hotel'] },
-    { id: 'town', name: 'Town', words: ['hospital', 'doctor', 'police', 'pharmacy', 'bank', 'passport', 'coffee', 'money'] }
+    { id: 'class', bookId: 'kids', book: 'Super Minds 1', bookCode: 'SM1', unit: 'Unit 1: At School', name: 'School', words: ['apple', 'banana', 'pen', 'pencil'] },
+    { id: 'outside', bookId: 'kids', book: 'Super Minds 1', bookCode: 'SM1', unit: 'Unit 2: Animals & Nature', name: 'Animals & Nature', words: ['ball', 'cat', 'dog', 'fish', 'tree', 'car'] },
+    { id: 'home', bookId: 'kids', book: 'Super Minds 1', bookCode: 'SM1', unit: 'Unit 3: House & Home', name: 'House & Home', words: ['door', 'window', 'cup', 'bed', 'bag', 'book'] },
+    { id: 'food', bookId: 'teens', book: 'Gateway to the World', bookCode: 'GTTW', unit: 'Unit 3: Snacks & Food', name: 'Snacks & Food', words: ['pizza', 'burger', 'chocolate', 'tomato', 'orange', 'water'] },
+    { id: 'play', bookId: 'teens', book: 'Gateway to the World', bookCode: 'GTTW', unit: 'Unit 4: Sports & Sounds', name: 'Sports & Sounds', words: ['football', 'tennis', 'music', 'camera', 'robot', 'radio'] },
+    { id: 'tech', bookId: 'teens', book: 'Gateway to the World', bookCode: 'GTTW', unit: 'Unit 1: Everyday Tech', name: 'Tech & Streetwear', words: ['headphones', 'computer', 'telephone', 'television', 'sneakers', 'backpack', 'bicycle', 'jacket'] },
+    { id: 'city', bookId: 'adults', book: 'Talk Keynote', bookCode: 'KEYNOTE', unit: 'Unit 1: Transit & Travel', name: 'Transit & Travel', words: ['taxi', 'bus', 'train', 'station', 'airport', 'hotel'] },
+    { id: 'town', bookId: 'adults', book: 'Talk Keynote', bookCode: 'KEYNOTE', unit: 'Unit 2: City Services', name: 'City Services', words: ['hospital', 'doctor', 'police', 'pharmacy', 'bank', 'passport', 'coffee', 'money'] }
   ],
   GROUPS: {
     food: ['apple', 'banana', 'pizza', 'burger', 'chocolate', 'tomato', 'orange', 'water', 'coffee'],
@@ -589,7 +690,21 @@ TT.QUESTION.forEach(w => { TT.QSET[w] = 1; });
 
 TT.setById = function (id) {
   for (let i = 0; i < TT.SETS.length; i++) if (TT.SETS[i].id === id) return TT.SETS[i];
-  return TT.SETS[3];
+  return TT.SETS[0];
+};
+
+TT.bookById = function (bookId) {
+  for (let i = 0; i < TT.BOOKS.length; i++) if (TT.BOOKS[i].id === bookId) return TT.BOOKS[i];
+  return TT.BOOKS[0];
+};
+
+TT.bookOfSet = function (setId) {
+  const s = TT.setById(setId);
+  return TT.bookById(s.bookId);
+};
+
+TT.setsByBook = function (bookId) {
+  return TT.SETS.filter(s => s.bookId === bookId);
 };
 
 TT.groupOf = function (word) {
@@ -1410,22 +1525,51 @@ function speakBoard(words) {
 }
 function chrome(extra) {
   const set = curSet();
+  const curBook = TT.bookOfSet(set.id) || TT.BOOKS[0];
+
+  const bookTabs = TT.BOOKS.map(b => {
+    const active = b.id === curBook.id ? ' active' : '';
+    return '<button type="button" class="book-pill' + active + '" data-book="' + b.id + '">' +
+      '<span class="book-icon">' + b.icon + '</span><span class="book-title">' + b.name + '</span>' +
+    '</button>';
+  }).join('');
+
   const chips = TT.SETS.map(s => {
     const icon = s.words[0];
     const done = S.setCleared[s.id] ? ' done' : '';
-    return '<button type="button" class="set-chip' + (s.id === set.id ? ' active' : '') + done + '" data-set="' + s.id + '" aria-label="' + s.name + '">' +
-      '<img src="' + CFG.ASSET + 'img/' + icon + '.jpg" alt=""></button>';
+    const active = s.id === set.id ? ' active' : '';
+    const inBook = s.bookId === curBook.id ? ' in-book' : ' other-book';
+    const tag = s.unit ? s.unit.split(':')[0].replace('Unit ', 'U') : '';
+    return '<button type="button" class="set-chip' + active + done + inBook + '" data-set="' + s.id + '" title="' + s.book + ' · ' + s.unit + '" aria-label="' + s.name + '">' +
+      '<img src="' + CFG.ASSET + 'img/' + icon + '.jpg" alt="">' +
+      (tag ? '<span class="set-chip-tag">' + tag + '</span>' : '') +
+      '</button>';
   }).join('');
+
   const pips = set.words.map(w => {
     const lv = TT.levelOf(S.mastery[w]);
     return '<i class="pip' + (lv >= 2 ? ' strong' : lv >= 1 ? ' ok' : '') + '"></i>';
   }).join('');
-  return '<div class="set-bar">' + chips + '</div>' +
+
+  return '<div class="coursebook-nav">' +
+    '<div class="book-pills">' + bookTabs + '</div>' +
+    '<div class="unit-badge"><strong>' + curBook.icon + ' ' + set.book + '</strong> · <span>' + set.unit + '</span></div>' +
+    '<div class="set-bar">' + chips + '</div>' +
+    '</div>' +
     '<div class="pips">' + pips + '</div>' +
     (extra || '');
 }
 function bindSets(render) {
   watchImages(stage);
+  stage.querySelectorAll('.book-pill').forEach(b => b.onclick = () => {
+    const targetBook = b.dataset.book;
+    const sets = TT.setsByBook(targetBook);
+    if (sets.length > 0) {
+      S.setId = sets[0].id;
+      save(false);
+      render();
+    }
+  });
   stage.querySelectorAll('.set-chip').forEach(b => b.onclick = () => {
     if (b.dataset.set === S.setId && S.setCleared[b.dataset.set]) { showDone(curSet(), false); return; }
     S.setId = b.dataset.set;
