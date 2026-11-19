@@ -214,11 +214,18 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
 .pillar-card:nth-child(3) { left: 8%; top: 42%; animation-delay: -1.1s; }
 .pillar-card:nth-child(4) { left: 50%; top: 46%; animation-delay: -1.7s; }
 .pillar-card.running { animation: none; }
+.pillar-card:nth-child(5) { left: 30%; top: 22%; width: 34%; animation-delay: -0.8s; }
+.arena.pack-5 .pillar-card { width: 34%; }
 .pillar-card.win {
-  z-index: 5; width: 64%; left: 18% !important; right: auto !important; top: 8% !important;
-  animation: winPop 0.55s cubic-bezier(.2, 1.6, .3, 1) both;
+  z-index: 5; width: 68%; left: 16% !important; right: auto !important; top: 6% !important;
+  animation: winPop 0.62s cubic-bezier(.15, 1.7, .28, 1) both;
+  box-shadow:
+    0 0 0 4px #fff,
+    0 0 0 12px rgba(253, 224, 71, 0.9),
+    0 0 48px 16px rgba(253, 224, 71, 0.55),
+    0 28px 50px rgba(0, 0, 0, 0.45);
 }
-.pillar-card.yeet { animation: yeet 0.42s ease-in forwards; z-index: 2; }
+.pillar-card.yeet { animation: yeet 0.48s cubic-bezier(.4, 0, 1, 1) forwards; z-index: 2; }
 .pillar-card.show-answer {
   z-index: 4; width: 58%; left: 21% !important; top: 12% !important;
   animation: jump 0.48s ease-in-out infinite;
@@ -238,7 +245,8 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
   100% { transform: scale(1) rotate(0); }
 }
 @keyframes yeet {
-  to { transform: translateY(120%) rotate(28deg); opacity: 0; }
+  0% { transform: translateY(0) rotate(0) scale(1); opacity: 1; }
+  100% { transform: translateY(140%) rotate(96deg) scale(0.35); opacity: 0; }
 }
 .pillar-card img, .find-tile img, .mem-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 .pillar-a { border-color: rgba(59, 130, 246, 0.55); }
@@ -293,12 +301,39 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
   display: flex; align-items: center; justify-content: center;
 }
 .mic-orb svg { width: 42px; height: 42px; fill: #fff; }
+.mic-ring {
+  width: 116px; height: 116px; border-radius: 50%;
+  display: grid; place-items: center; flex: 0 0 auto;
+  background: conic-gradient(#4ade80 calc(var(--p, 0) * 100%), rgba(255,255,255,0.14) 0);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+}
 .mic-orb.recording {
   background: radial-gradient(circle at 35% 30%, #22c55e, #15803d 70%);
   animation: callGlow 0.7s ease-in-out infinite alternate;
+  box-shadow: 0 0 0 calc(6px + var(--level, 0) * 26px) rgba(74, 222, 128, 0.38);
 }
+.mic-orb.arming { opacity: 0.7; filter: saturate(0.7); }
 .mic-orb:disabled { opacity: 0.45; cursor: default; }
 .mic-orb.blocked { filter: grayscale(1); opacity: 0.4; }
+#load {
+  position: absolute; left: 0; right: 0; top: 0; z-index: 50;
+  height: 6px; opacity: 0; pointer-events: none; overflow: hidden;
+  background: rgba(255,255,255,0.16);
+}
+#load.on { opacity: 1; }
+#loadBar {
+  display: block; height: 100%; width: 0%;
+  background: linear-gradient(90deg, #22d3ee, #fde047 70%, #4ade80);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.8);
+}
+#load.busy #loadBar {
+  width: 36%;
+  animation: loadSlide 0.85s ease-in-out infinite;
+}
+@keyframes loadSlide {
+  0% { transform: translateX(-130%); }
+  100% { transform: translateX(320%); }
+}
 .status-line { min-height: 22px; text-align: center; color: #cbd5e1; font-weight: 700; }
 
 .modal-backdrop {
@@ -382,14 +417,92 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
 }
 #fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
 
+#sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; color: #38bdf8; }
+#sky i, #sky b { position: absolute; display: block; border-radius: 50%; }
+#sky i { background: currentColor; filter: blur(10px); opacity: 0.45; animation: drift 16s ease-in-out infinite; }
+#sky i:nth-child(1) { width: 200px; height: 200px; left: -50px; top: 16%; }
+#sky i:nth-child(2) { width: 140px; height: 140px; right: -30px; top: 38%; animation-duration: 12s; animation-delay: -4s; opacity: 0.35; }
+#sky i:nth-child(3) { width: 90px; height: 90px; left: 38%; top: 8%; animation-duration: 9s; animation-delay: -2s; opacity: 0.5; }
+#sky b {
+  width: 150%; height: 30%; left: -25%; bottom: -10%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.2), transparent 68%);
+  filter: blur(4px);
+}
+#sky::before {
+  content: '';
+  position: absolute; inset: -30%;
+  background: conic-gradient(from 120deg, transparent, currentColor, transparent 32%, transparent 68%, currentColor, transparent);
+  opacity: 0.16; filter: blur(36px);
+  animation: spinSky 32s linear infinite;
+}
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(24px, -30px, 0) scale(1.12); }
+}
+@keyframes spinSky { to { transform: rotate(360deg); } }
+#app.world-home #sky { color: #fbbf24; }
+#app.world-outside #sky { color: #4ade80; }
+#app.world-class #sky { color: #60a5fa; }
+#app.world-food #sky { color: #fb923c; }
+#app.world-play #sky { color: #e879f9; }
+#app.world-tech #sky { color: #22d3ee; }
+#app.world-city #sky { color: #facc15; }
+#app.world-town #sky { color: #fb7185; }
+#app.hot #sky i { opacity: 0.8; filter: blur(6px); }
+#app.blaze { box-shadow: inset 0 0 90px rgba(251, 146, 60, 0.38); }
+#app::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 20; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+}
+#app.flash::after {
+  content: '';
+  position: absolute; inset: 0; z-index: 46; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.62), transparent 58%);
+  animation: flashOut 0.34s ease-out forwards;
+}
+@keyframes flashOut {
+  0% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+.pillar-card::after, .find-tile::after, .mem-card::after, .hero::after, .done-pic::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2;
+  background: linear-gradient(155deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.06) 30%, transparent 48%, rgba(0,0,0,0.22) 100%);
+}
+.hero, .done-pic { position: relative; }
+.set-chip:not(.active) { animation: floaty 3.6s ease-in-out infinite; }
+.set-chip:nth-child(2n):not(.active) { animation-delay: -1.2s; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.pip.strong { animation: pipPulse 1.3s ease-in-out infinite; }
+@keyframes pipPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.45); }
+}
+.play-orb.speaking { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.35), 0 0 32px rgba(2, 132, 199, 0.7); }
+.hero.ready { box-shadow: 0 0 0 6px rgba(0, 240, 255, 0.45), 0 0 36px rgba(0, 240, 255, 0.55); }
+#app.world-home .pillar-card { border-color: #fde68a; }
+#app.world-outside .pillar-card { border-color: #bbf7d0; }
+#app.world-class .pillar-card { border-color: #bfdbfe; }
+#app.world-food .pillar-card { border-color: #fed7aa; }
+#app.world-play .pillar-card { border-color: #f5d0fe; }
+#app.world-tech .pillar-card { border-color: #a5f3fc; }
+#app.world-city .pillar-card { border-color: #fde68a; }
+#app.world-town .pillar-card { border-color: #fecdd3; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+  #load.busy #loadBar { width: 100% !important; transform: none !important; opacity: 0.75; }
 }
 
 </style>
 </head>
 <body>
 <div id="app">
+  <div id="sky" aria-hidden="true"><i></i><i></i><i></i><b></b></div>
   <header id="hud">
     <div id="hudCoins" class="hud-pill coins-pill" aria-label="Coins">
       <span class="sync-dot phone" id="syncDot" title="Saved on this phone"></span>
@@ -430,6 +543,7 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
     </button>
   </nav>
 
+  <div id="load" aria-hidden="true"><span id="loadBar"></span></div>
   <main id="stage"></main>
   <p id="live" class="sr-only" aria-live="polite"></p>
 
@@ -722,7 +836,7 @@ function noteTap(word, correct) {
   return { m: m, before: before, after: after, gained: gained };
 }
 function pay(n) {
-  if (n > 0) earn(n);
+  if (n > 0) { sfxCoin(); coinRain(); earn(n); }
   else save();
 }
 function showTeach(word) {
@@ -747,6 +861,7 @@ let seq = 0;
 let talking = [];
 function stopTalk() {
   seq++;
+  endKind('voice');
   talking.forEach(a => { try { a.pause(); a.src = ''; } catch (e) {} });
   talking = [];
 }
@@ -755,19 +870,97 @@ function playUrls(urls) {
   const my = ++seq;
   talking.forEach(a => { try { a.pause(); } catch (e) {} });
   talking = [];
+  endKind('voice');
+  const job = beginLoad(null, 'voice');
   return new Promise(resolve => {
     let i = 0;
+    const total = urls.length;
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      endLoad(job);
+      resolve();
+    };
     const step = () => {
-      if (my !== seq) return resolve();
-      if (i >= urls.length) return resolve();
+      if (my !== seq) return finish();
+      if (i >= total) return finish();
+      const index = i;
       const a = new Audio(CFG.ASSET + urls[i++]);
+      a.preload = 'auto';
       talking.push(a);
-      const done = () => { if (my === seq) step(); };
-      a.onended = done;
-      a.onerror = done;
-      a.play().catch(done);
+      let moved = false;
+      const next = () => { if (moved) return; moved = true; step(); };
+      const tick = () => {
+        if (my !== seq) return;
+        const d = a.duration;
+        const part = d && isFinite(d) && d > 0 ? Math.min(1, a.currentTime / d) : 0;
+        setLoad(job, (index + part) / total);
+      };
+      a.ontimeupdate = tick;
+      a.onloadedmetadata = tick;
+      a.onended = next;
+      a.onerror = next;
+      const started = a.play();
+      if (started && started.catch) started.catch(next);
     };
     step();
+  });
+}
+let loads = [];
+let loadN = 0;
+function paintLoad() {
+  const el = $('load');
+  const bar = $('loadBar');
+  if (!el || !bar) return;
+  if (!loads.length) {
+    el.classList.remove('on', 'busy');
+    bar.style.width = '0%';
+    return;
+  }
+  el.classList.add('on');
+  const known = loads.filter(x => x.p >= 0);
+  if (known.length) {
+    el.classList.remove('busy');
+    const p = known.reduce((sum, x) => sum + x.p, 0) / known.length;
+    bar.style.width = Math.max(0, Math.min(100, p * 100)) + '%';
+  } else {
+    el.classList.add('busy');
+    bar.style.width = '36%';
+  }
+}
+function beginLoad(p, kind) {
+  const id = ++loadN;
+  loads.push({ id: id, p: p == null ? -1 : p, kind: kind || '' });
+  paintLoad();
+  return id;
+}
+function setLoad(id, p) {
+  for (let i = 0; i < loads.length; i++) if (loads[i].id === id) loads[i].p = p;
+  paintLoad();
+}
+function endLoad(id) {
+  loads = loads.filter(x => x.id !== id);
+  paintLoad();
+}
+function endKind(kind) {
+  loads = loads.filter(x => x.kind !== kind);
+  paintLoad();
+}
+function watchImages(root) {
+  if (!root) return;
+  const pending = [...root.querySelectorAll('img')].filter(img => !img.complete);
+  if (!pending.length) return;
+  const job = beginLoad(0, 'img');
+  let done = 0;
+  const tick = () => {
+    done++;
+    setLoad(job, done / pending.length);
+    if (done >= pending.length) endLoad(job);
+  };
+  pending.forEach(img => {
+    img.addEventListener('load', tick, { once: true });
+    img.addEventListener('error', tick, { once: true });
   });
 }
 function file(kind, word) { return 'audio/' + kind + '_' + word + '.mp3'; }
@@ -778,6 +971,23 @@ const fx = $('fx');
 const fxc = fx.getContext('2d');
 let sparks = [];
 let liveStops = [];
+let voices = 0;
+let lastBounce = 0;
+let noiseBuf = null;
+const WORLD_INK = {
+  home: ['#fde68a', '#fb923c', '#fff7ed', '#f59e0b'],
+  outside: ['#bbf7d0', '#4ade80', '#ecfccb', '#86efac'],
+  class: ['#bfdbfe', '#60a5fa', '#fff', '#22d3ee'],
+  food: ['#fed7aa', '#fb923c', '#fff', '#fde047'],
+  play: ['#f5d0fe', '#e879f9', '#fff', '#f472b6'],
+  tech: ['#a5f3fc', '#22d3ee', '#fff', '#67e8f9'],
+  city: ['#fde68a', '#facc15', '#fff', '#f59e0b'],
+  town: ['#fecdd3', '#fb7185', '#fff', '#fda4af']
+};
+function ink() {
+  const id = curSet().id;
+  return WORLD_INK[id] || WORLD_INK.food;
+}
 function sizeFx() {
   const r = fx.parentElement.getBoundingClientRect();
   const d = window.devicePixelRatio || 1;
@@ -785,59 +995,193 @@ function sizeFx() {
   fx.height = Math.max(1, r.height * d);
   fxc.setTransform(d, 0, 0, d, 0, 0);
 }
+window.addEventListener('resize', sizeFx);
+function pushSpark(p) {
+  sparks.push(p);
+  if (sparks.length > 220) sparks.splice(0, sparks.length - 220);
+}
+function placeOf(el) {
+  const app = $('app').getBoundingClientRect();
+  const b = el.getBoundingClientRect();
+  return { x: b.left + b.width / 2 - app.left, y: b.top + b.height / 2 - app.top };
+}
 function burstAt(el) {
   if (!el) return;
   sizeFx();
-  const app = $('app').getBoundingClientRect();
-  const b = el.getBoundingClientRect();
-  const x = b.left + b.width / 2 - app.left;
-  const y = b.top + b.height / 2 - app.top;
-  const colors = ['#fde047', '#fb7185', '#22d3ee', '#4ade80', '#fff', '#fb923c'];
-  for (let i = 0; i < 42; i++) {
+  const p = placeOf(el);
+  const colors = ink();
+  for (let i = 0; i < 56; i++) {
     const a = Math.random() * Math.PI * 2;
-    const s = 90 + Math.random() * 320;
-    sparks.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 80, life: 1, color: colors[i % colors.length], z: 5 + Math.random() * 7 });
+    const s = 120 + Math.random() * 420;
+    pushSpark({
+      kind: i % 5 === 0 ? 'star' : 'dot',
+      x: p.x, y: p.y,
+      vx: Math.cos(a) * s, vy: Math.sin(a) * s - 90,
+      life: 0.85 + Math.random() * 0.35,
+      color: colors[i % colors.length],
+      z: 4 + Math.random() * 8
+    });
+  }
+  pushSpark({ kind: 'ring', x: p.x, y: p.y, vx: 0, vy: 0, life: 1, color: colors[0], z: Math.max(48, el.offsetWidth * 0.35) });
+  pushSpark({ kind: 'ring', x: p.x, y: p.y, vx: 0, vy: 0, life: 0.72, color: '#fff', z: Math.max(28, el.offsetWidth * 0.2) });
+}
+function dropTrail(el) {
+  const p = placeOf(el);
+  const colors = ink();
+  pushSpark({
+    kind: 'dot', x: p.x, y: p.y + el.offsetHeight * 0.22,
+    vx: (Math.random() - 0.5) * 24, vy: 16,
+    life: 0.38, color: colors[Math.floor(Math.random() * colors.length)], z: 3
+  });
+}
+function coinRain() {
+  const el = $('hudCoins');
+  if (!el) return;
+  sizeFx();
+  const p = placeOf(el);
+  for (let i = 0; i < 16; i++) {
+    pushSpark({
+      kind: 'star', x: p.x, y: p.y,
+      vx: (Math.random() - 0.5) * 260,
+      vy: -160 - Math.random() * 240,
+      life: 0.9, color: i % 2 ? '#fde047' : '#fff7ed', z: 4 + Math.random() * 4
+    });
   }
 }
+function starPath(x, y, r) {
+  fxc.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const a = -Math.PI / 2 + i * (Math.PI * 2 / 5);
+    const b = a + Math.PI / 5;
+    const px = x + Math.cos(a) * r;
+    const py = y + Math.sin(a) * r;
+    if (i === 0) fxc.moveTo(px, py); else fxc.lineTo(px, py);
+    fxc.lineTo(x + Math.cos(b) * r * 0.42, y + Math.sin(b) * r * 0.42);
+  }
+  fxc.closePath();
+}
 function fxLoop() {
-  const w = fx.width / (window.devicePixelRatio || 1);
-  const h = fx.height / (window.devicePixelRatio || 1);
+  const dpr = window.devicePixelRatio || 1;
+  const w = fx.width / dpr;
+  const h = fx.height / dpr;
   fxc.clearRect(0, 0, w, h);
   sparks = sparks.filter(p => p.life > 0);
   sparks.forEach(p => {
-    p.life -= 0.016;
+    p.life -= p.kind === 'ring' ? 0.02 : 0.018;
+    if (p.life <= 0) return;
     p.x += p.vx * 0.016;
     p.y += p.vy * 0.016;
-    p.vy += 520 * 0.016;
-    fxc.globalAlpha = Math.max(0, p.life);
+    if (p.kind !== 'ring') p.vy += 480 * 0.016;
+    fxc.globalAlpha = Math.max(0, Math.min(1, p.life));
     fxc.fillStyle = p.color;
-    fxc.beginPath();
-    fxc.arc(p.x, p.y, p.z * p.life, 0, 7);
-    fxc.fill();
+    fxc.strokeStyle = p.color;
+    if (p.kind === 'ring') {
+      fxc.lineWidth = 3 * Math.max(0.2, p.life);
+      fxc.beginPath();
+      fxc.arc(p.x, p.y, Math.max(1, p.z * (1.55 - Math.min(1.2, p.life))), 0, Math.PI * 2);
+      fxc.stroke();
+    } else if (p.kind === 'star') {
+      starPath(p.x, p.y, Math.max(0.5, p.z * p.life));
+      fxc.fill();
+    } else {
+      fxc.beginPath();
+      fxc.arc(p.x, p.y, Math.max(0.4, p.z * p.life), 0, Math.PI * 2);
+      fxc.fill();
+    }
   });
   fxc.globalAlpha = 1;
   requestAnimationFrame(fxLoop);
 }
 requestAnimationFrame(fxLoop);
-function blip(up) {
+function tone(opts) {
   const ctx = ensureAudio();
-  if (!ctx || !S.soundOn) return;
-  const now = ctx.currentTime;
+  if (!ctx || !S.soundOn || voices > 16) return;
+  const now = ctx.currentTime + (opts.at || 0);
   const o = ctx.createOscillator();
   const g = ctx.createGain();
-  o.type = up ? 'triangle' : 'sawtooth';
-  o.frequency.setValueAtTime(up ? 480 : 180, now);
-  o.frequency.exponentialRampToValueAtTime(up ? 980 : 50, now + 0.12);
-  g.gain.setValueAtTime(0.09, now);
-  g.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+  o.type = opts.type || 'sine';
+  o.frequency.setValueAtTime(Math.max(40, opts.f0), now);
+  if (opts.f1) o.frequency.exponentialRampToValueAtTime(Math.max(40, opts.f1), now + opts.dur);
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(opts.gain || 0.05, now + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, now + opts.dur);
   o.connect(g); g.connect(ctx.destination);
-  o.start(now); o.stop(now + 0.18);
+  voices++;
+  o.onended = () => { voices = Math.max(0, voices - 1); };
+  o.start(now); o.stop(now + opts.dur + 0.02);
+}
+function noise(opts) {
+  const ctx = ensureAudio();
+  if (!ctx || !S.soundOn || voices > 16) return;
+  if (!noiseBuf) {
+    const n = Math.floor(ctx.sampleRate * 0.4);
+    noiseBuf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const data = noiseBuf.getChannelData(0);
+    for (let i = 0; i < n; i++) data[i] = Math.random() * 2 - 1;
+  }
+  const now = ctx.currentTime + (opts.at || 0);
+  const src = ctx.createBufferSource();
+  src.buffer = noiseBuf;
+  const f = ctx.createBiquadFilter();
+  f.type = 'bandpass';
+  f.Q.value = opts.q || 0.7;
+  f.frequency.setValueAtTime(opts.f0 || 800, now);
+  if (opts.f1) f.frequency.exponentialRampToValueAtTime(Math.max(40, opts.f1), now + opts.dur);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(opts.gain || 0.04, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + opts.dur);
+  src.connect(f); f.connect(g); g.connect(ctx.destination);
+  voices++;
+  src.onended = () => { voices = Math.max(0, voices - 1); };
+  src.start(now); src.stop(now + opts.dur);
+}
+function sfxHit() {
+  tone({ type: 'triangle', f0: 523, f1: 880, dur: 0.14, gain: 0.05 });
+  tone({ type: 'sine', f0: 784, f1: 1318, dur: 0.18, gain: 0.035, at: 0.03 });
+  tone({ type: 'sine', f0: 1568, dur: 0.1, gain: 0.025, at: 0.05 });
+  noise({ f0: 1800, f1: 5200, dur: 0.09, gain: 0.03, q: 0.6 });
+}
+function sfxMiss() {
+  tone({ type: 'sine', f0: 196, f1: 52, dur: 0.24, gain: 0.07 });
+  noise({ f0: 240, f1: 70, dur: 0.16, gain: 0.05, q: 0.8 });
+}
+function sfxWhoosh() {
+  noise({ f0: 320, f1: 2200, dur: 0.28, gain: 0.05, q: 0.45 });
+}
+function sfxCoin() {
+  [880, 1175, 1568].forEach((f, i) => tone({ type: 'triangle', f0: f, dur: 0.12, gain: 0.04, at: i * 0.07 }));
+}
+function sfxFanfare() {
+  [523, 659, 784, 1046].forEach((f, i) => tone({ type: 'triangle', f0: f, dur: 0.22, gain: 0.05, at: i * 0.08 }));
+  noise({ f0: 2400, f1: 6400, dur: 0.18, gain: 0.02, at: 0.3 });
+}
+function sfxBounce() {
+  const t = performance.now();
+  if (t - lastBounce < 120) return;
+  lastBounce = t;
+  tone({ type: 'sine', f0: 280 + Math.random() * 90, dur: 0.045, gain: 0.018 });
+}
+function sfxArm() {
+  tone({ type: 'sine', f0: 660, f1: 1046, dur: 0.16, gain: 0.04 });
+}
+function sfxSpark() {
+  tone({ type: 'sine', f0: 1318, f1: 1976, dur: 0.09, gain: 0.02 });
+}
+function blip(up) {
+  if (up) { sfxHit(); flash(); }
+  else sfxMiss();
 }
 function shake() {
   const app = $('app');
   app.classList.remove('shake');
   void app.offsetWidth;
   app.classList.add('shake');
+}
+function flash() {
+  const app = $('app');
+  app.classList.remove('flash');
+  void app.offsetWidth;
+  app.classList.add('flash');
 }
 function poke(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} }
 function stopLive() {
@@ -847,6 +1191,7 @@ function stopLive() {
 function chase(box, selector) {
   stopLive();
   if (!box) return;
+  sizeFx();
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   box.querySelectorAll(selector).forEach((card, i) => {
     card.classList.add('running');
@@ -856,9 +1201,10 @@ function chase(box, selector) {
     const ch = card.offsetHeight || cw;
     let x = Math.random() * Math.max(8, bw - cw - 8);
     let y = Math.random() * Math.max(8, bh - ch - 8);
-    let vx = reduce ? 0 : (48 + Math.random() * 60) * (i % 2 ? 1 : -1);
-    let vy = reduce ? 0 : (36 + Math.random() * 50) * (Math.random() < 0.5 ? -1 : 1);
+    let vx = reduce ? 0 : (52 + Math.random() * 70) * (i % 2 ? 1 : -1);
+    let vy = reduce ? 0 : (40 + Math.random() * 56) * (Math.random() < 0.5 ? -1 : 1);
     let last = performance.now();
+    let trail = 0;
     let dead = false;
     let raf = 0;
     const step = (now) => {
@@ -868,15 +1214,23 @@ function chase(box, selector) {
       last = now;
       const W = box.clientWidth, H = box.clientHeight;
       const ww = card.offsetWidth, hh = card.offsetHeight;
+      vx += Math.sin(now / 700 + i) * 18 * dt;
+      vy += Math.cos(now / 900 + i) * 14 * dt;
       x += vx * dt; y += vy * dt;
-      if (x < 0) { x = 0; vx = Math.abs(vx); }
-      if (y < 0) { y = 0; vy = Math.abs(vy); }
-      if (x > W - ww) { x = Math.max(0, W - ww); vx = -Math.abs(vx); }
-      if (y > H - hh) { y = Math.max(0, H - hh); vy = -Math.abs(vy); }
+      let hit = false;
+      if (x < 0) { x = 0; vx = Math.abs(vx); hit = true; }
+      if (y < 0) { y = 0; vy = Math.abs(vy); hit = true; }
+      if (x > W - ww) { x = Math.max(0, W - ww); vx = -Math.abs(vx); hit = true; }
+      if (y > H - hh) { y = Math.max(0, H - hh); vy = -Math.abs(vy); hit = true; }
+      if (hit) sfxBounce();
       card.style.left = x + 'px';
       card.style.top = y + 'px';
       card.style.right = 'auto';
-      card.style.transform = 'rotate(' + (vx * 0.05) + 'deg)';
+      card.style.transform = 'rotate(' + Math.max(-14, Math.min(14, vx * 0.08)) + 'deg)';
+      if (!reduce) {
+        trail += dt;
+        if (trail > 0.07) { trail = 0; dropTrail(card); }
+      }
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -935,6 +1289,8 @@ function renderHUD() {
   const app = $('app');
   [...app.classList].forEach(c => { if (c.indexOf('world-') === 0) app.classList.remove(c); });
   app.classList.add('world-' + set.id);
+  app.classList.toggle('hot', S.streak >= 3);
+  app.classList.toggle('blaze', S.streak >= 6);
   $('hudGear').classList.toggle('on', S.beatOn);
   $('hudGear').setAttribute('aria-label', (S.beatOn ? 'Beat on. ' : 'Beat off. ') + 'Gear ' + gear + '. ' + TT.gearLabel(gear));
   $('btnSound').classList.toggle('muted', !S.soundOn);
@@ -976,9 +1332,21 @@ function setSync(kind) {
   dot.className = 'sync-dot ' + kind;
   dot.title = kind === 'synced' ? 'Synced' : 'Saved on this phone';
 }
-async function postAPI(body) {
-  const res = await fetch(CFG.API, { method: 'POST', body: JSON.stringify(body) });
-  return res.json();
+async function postAPI(body, ms) {
+  const job = beginLoad();
+  const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+  const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, ms || 15000);
+  try {
+    const res = await fetch(CFG.API, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      signal: ctrl ? ctrl.signal : undefined
+    });
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+    endLoad(job);
+  }
 }
 async function syncNow() {
   if (!CFG.API || !S.id) { setSync('phone'); return; }
@@ -1007,6 +1375,7 @@ function hideSheet() { sheet.classList.add('hidden'); sheetCard.innerHTML = ''; 
 function showSheet(html) {
   sheetCard.innerHTML = html;
   sheet.classList.remove('hidden');
+  watchImages(sheetCard);
   const next = sheetCard.querySelector('[data-act=next]');
   if (next) next.focus();
 }
@@ -1033,7 +1402,7 @@ function speakBoard(words) {
       if (my !== boardGen || sheet.classList.contains('hidden')) return;
       root.querySelectorAll('.done-pic').forEach(n => n.classList.toggle('on', n.dataset.word === words[i]));
       const lit = root.querySelector('.done-pic.on');
-      if (lit) burstAt(lit);
+      if (lit) { burstAt(lit); sfxSpark(); }
       await playUrls([voiceClip(words[i])]);
     }
     if (my === boardGen) root.querySelectorAll('.done-pic').forEach(n => n.classList.remove('on'));
@@ -1056,6 +1425,7 @@ function chrome(extra) {
     (extra || '');
 }
 function bindSets(render) {
+  watchImages(stage);
   stage.querySelectorAll('.set-chip').forEach(b => b.onclick = () => {
     if (b.dataset.set === S.setId && S.setCleared[b.dataset.set]) { showDone(curSet(), false); return; }
     S.setId = b.dataset.set;
@@ -1103,6 +1473,11 @@ function maybeClearSet() {
   logEvent({ type: 'tap', word: set.words[0], correct: 1, misses: 0, ms: 0 });
   save();
   showDone(set, true);
+  sfxFanfare();
+  flash();
+  sheetCard.querySelectorAll('.done-pic').forEach((pic, i) => {
+    setTimeout(() => { if (pic.isConnected) burstAt(pic); }, 80 + i * 90);
+  });
   return true;
 }
 
@@ -1120,7 +1495,8 @@ function renderDrill() {
     const j = Math.floor(Math.random() * (i + 1));
     const t = crowd[i]; crowd[i] = crowd[j]; crowd[j] = t;
   }
-  const pack = [word].concat(crowd.slice(0, 3));
+  const foilN = crowd.length >= 4 ? 4 : crowd.length;
+  const pack = [word].concat(crowd.slice(0, foilN));
   for (let i = pack.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     const t = pack[i]; pack[i] = pack[j]; pack[j] = t;
@@ -1132,7 +1508,7 @@ function renderDrill() {
     '<button type="button" class="pillar-card" data-word="' + w + '" aria-label="Picture"><img src="' + CFG.ASSET + 'img/' + w + '.jpg" alt=""></button>'
   ).join('');
   stage.innerHTML = '<div class="drill-view">' + chrome(
-    '<div class="arena" id="arena">' + cards +
+    '<div class="arena' + (pack.length >= 5 ? ' pack-5' : '') + '" id="arena">' + cards +
       '<button type="button" class="play-orb" id="hearBtn" aria-label="Hear the word"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
     '</div></div>'
   );
@@ -1155,6 +1531,7 @@ async function hearDrill(manual, gen) {
   if (!manual) {
     drill.phase = 'answer';
     chase($('arena'), '.pillar-card');
+    sfxArm();
     setPrompt('Tap the picture.');
   }
 }
@@ -1175,6 +1552,7 @@ async function answerDrill(card) {
     });
     burstAt(card);
     blip(true);
+    sfxWhoosh();
     poke(16);
     setPrompt('Nice.');
     logEvent({ type: 'tap', word: drill.word, correct: 1, misses: drill.misses, ms: 0 });
@@ -1202,6 +1580,7 @@ async function answerDrill(card) {
         if (c.dataset.word === drill.word) c.classList.add('show-answer');
         else c.classList.add('yeet');
       });
+      sfxWhoosh();
     }
     setTimeout(() => card.classList.remove('miss-snap'), 360);
     await playUrls([cue('oops'), file(drill.kind, drill.word)]);
@@ -1246,6 +1625,7 @@ async function hearFind(manual) {
   if (!manual) {
     findRound.phase = 'answer';
     stage.querySelectorAll('.find-tile').forEach(t => { if (!t.classList.contains('found')) t.classList.add('ready'); });
+    sfxArm();
     setPrompt('Tap the picture.');
   }
 }
@@ -1295,7 +1675,9 @@ function answerFind(tile) {
 
 /* ---------- SPEAK ---------- */
 let speak = null;
-let rec = { on: false, stop: null, chunks: [], stream: null };
+let rec = { on: false, busy: false, stop: null, stream: null, timer: null, unmeter: null, startedAt: 0 };
+const REC_MS = 3200;
+const MIC_AUDIO = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: { ideal: 1 } };
 function renderSpeak() {
   const gen = ++viewGen;
   stopTalk();
@@ -1308,7 +1690,9 @@ function renderSpeak() {
   speak = { gen, word, heardModel: false };
   stage.innerHTML = '<div class="speak-view">' + chrome(
     '<button type="button" class="hero" id="hero" aria-label="Hear the word"><img src="' + CFG.ASSET + 'img/' + word + '.jpg" alt=""></button>' +
-    '<button type="button" class="mic-orb" id="micBtn" aria-label="Say the word" disabled><svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></button>' +
+    '<div class="mic-ring" id="micRing" style="--p:0">' +
+      '<button type="button" class="mic-orb" id="micBtn" aria-label="Say the word" disabled><svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></button>' +
+    '</div>' +
     '<p class="sr-only" id="speakStatus"></p></div>'
   );
   bindSets(renderSpeak);
@@ -1334,83 +1718,213 @@ async function modelSpeak() {
   const hero = $('hero');
   if (mic) mic.disabled = false;
   if (hero) hero.classList.add('ready');
+  sfxArm();
   setPrompt('Your turn.');
+}
+function dropTracks(stream) {
+  if (!stream) return;
+  if (rec.stream === stream) rec.stream = null;
+  stream.getTracks().forEach(t => { try { t.stop(); } catch (e) {} });
 }
 function releaseMic() {
   rec.on = false;
-  if (rec.stream) rec.stream.getTracks().forEach(t => t.stop());
-  rec.stream = null;
+  if (rec.timer) { clearTimeout(rec.timer); rec.timer = null; }
+  if (rec.unmeter) { try { rec.unmeter(); } catch (e) {} rec.unmeter = null; }
+  const stop = rec.stop;
+  const stream = rec.stream;
   rec.stop = null;
+  endKind('mic');
+  const btn = $('micBtn');
+  if (btn) btn.classList.remove('recording', 'arming');
+  const ring = $('micRing');
+  if (ring) ring.style.setProperty('--p', '0');
+  if (stop) {
+    try { stop(); } catch (e) {}
+    setTimeout(() => dropTracks(stream), 70);
+  } else dropTracks(stream);
+}
+function meter(stream) {
+  const ctx = ensureAudio();
+  if (!ctx) return function () {};
+  let src, an, dead = false;
+  try {
+    src = ctx.createMediaStreamSource(stream);
+    an = ctx.createAnalyser();
+    an.fftSize = 512;
+    src.connect(an);
+  } catch (e) { return function () {}; }
+  const buf = new Uint8Array(an.fftSize);
+  const tick = () => {
+    if (dead) return;
+    an.getByteTimeDomainData(buf);
+    let s = 0;
+    for (let i = 0; i < buf.length; i++) {
+      const v = (buf[i] - 128) / 128;
+      s += v * v;
+    }
+    const btn = $('micBtn');
+    if (btn) btn.style.setProperty('--level', Math.min(1, Math.sqrt(s / buf.length) * 12).toFixed(3));
+    requestAnimationFrame(tick);
+  };
+  if (ctx.state === 'suspended') ctx.resume();
+  tick();
+  return function () { dead = true; try { src.disconnect(); } catch (e) {} };
+}
+async function openMic() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('no_mic');
+  try {
+    return await navigator.mediaDevices.getUserMedia({ audio: MIC_AUDIO });
+  } catch (e) {
+    if (e && (e.name === 'OverconstrainedError' || e.name === 'ConstraintNotSatisfiedError')) {
+      return navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+    throw e;
+  }
 }
 async function toggleMic() {
   if (!speak || !speak.heardModel) return;
-  if (rec.on) { if (rec.stop) rec.stop(); return; }
+  if (rec.on) {
+    if (performance.now() - rec.startedAt < 420) return;
+    if (rec.stop) rec.stop();
+    return;
+  }
   if (rec.busy) return;
   rec.busy = true;
+  const gen = speak.gen;
+  const word = speak.word;
   stopTalk();
+  ensureAudio();
+  const btn = $('micBtn');
+  if (btn) btn.classList.add('arming');
+  const arm = beginLoad(null, 'mic');
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await openMic();
+    if (!speak || speak.gen !== gen) {
+      stream.getTracks().forEach(t => { try { t.stop(); } catch (e) {} });
+      endLoad(arm);
+      return;
+    }
+    endLoad(arm);
     rec.stream = stream;
     rec.on = true;
-    $('micBtn').classList.add('recording');
+    rec.startedAt = performance.now();
+    stream.getTracks().forEach(t => {
+      t.addEventListener('ended', () => { if (rec.on && rec.stop) rec.stop(); });
+    });
+    if (btn) { btn.classList.remove('arming'); btn.classList.add('recording'); }
     $('speakStatus').textContent = 'Listening…';
+    rec.unmeter = meter(stream);
+    const job = beginLoad(0, 'mic');
+    let raf = 0;
+    const pump = () => {
+      if (!rec.on) return;
+      const p = Math.min(1, (performance.now() - rec.startedAt) / REC_MS);
+      setLoad(job, p);
+      const ring = $('micRing');
+      if (ring) ring.style.setProperty('--p', p.toFixed(3));
+      raf = requestAnimationFrame(pump);
+    };
+    raf = requestAnimationFrame(pump);
+    const stopPump = () => { cancelAnimationFrame(raf); endLoad(job); };
+    let result = null;
     const mime = pickMime();
-    if (window.MediaRecorder && mime) await recordMime(stream, mime);
-    else await recordWav(stream, 3200);
+    if (window.MediaRecorder && mime) result = await recordMime(stream, mime);
+    if (!result || result.fallback) {
+      if (rec.on && rec.stream) result = await recordWav(rec.stream, Math.max(500, REC_MS - (performance.now() - rec.startedAt)));
+    }
+    stopPump();
+    releaseMic();
+    if (!speak || speak.gen !== gen) return;
+    if (!result || result.empty || !result.b64) {
+      setPrompt('Try again.');
+      if ($('speakStatus')) $('speakStatus').textContent = 'We did not hear you. Come closer and say the word.';
+      playUrls([cue('goodtry'), file('w', word)]);
+      return;
+    }
+    await judge(result.b64, result.mime, word, gen);
   } catch (e) {
+    endKind('mic');
+    releaseMic();
+    if (!speak || speak.gen !== gen) return;
     const mic = $('micBtn');
     if (mic) mic.classList.add('blocked');
     setPrompt('The microphone is blocked.');
     playUrls([cue('oops')]);
-    releaseMic();
+  } finally {
+    rec.busy = false;
+    const b = $('micBtn');
+    if (b) b.classList.remove('recording', 'arming');
   }
-  rec.busy = false;
-  const btn = $('micBtn');
-  if (btn) btn.classList.remove('recording');
 }
 function pickMime() {
   if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
-  return ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+  return ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'].find(t => {
+    try { return MediaRecorder.isTypeSupported(t); } catch (e) { return false; }
+  }) || '';
 }
 function recordMime(stream, mime) {
   return new Promise(resolve => {
-    const mr = new MediaRecorder(stream, { mimeType: mime });
+    let mr;
+    try { mr = new MediaRecorder(stream, { mimeType: mime }); }
+    catch (e) { resolve({ fallback: true }); return; }
     const chunks = [];
+    let settled = false;
+    let fallback = false;
+    const settle = (payload) => { if (settled) return; settled = true; resolve(payload); };
     mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
-    mr.onstop = async () => {
-      releaseMic();
-      const blob = new Blob(chunks, { type: mime });
-      const b64 = await blobToB64(blob);
-      await judge(b64, mime.split(';')[0]);
-      resolve();
+    mr.onerror = () => {
+      fallback = true;
+      try { if (mr.state !== 'inactive') mr.stop(); } catch (e) {}
+      settle({ fallback: true });
     };
-    rec.stop = () => { if (mr.state !== 'inactive') mr.stop(); };
-    mr.start();
-    setTimeout(() => { if (rec.on && rec.stop) rec.stop(); }, 3200);
+    mr.onstop = async () => {
+      if (fallback) { settle({ fallback: true }); return; }
+      try {
+        const blob = new Blob(chunks, { type: mime });
+        if (blob.size < 800) { settle({ empty: true }); return; }
+        const b64 = await blobToB64(blob);
+        settle({ b64: b64, mime: mime.split(';')[0] });
+      } catch (e) { settle({ fallback: true }); }
+    };
+    rec.stop = () => {
+      try { if (mr.state === 'recording') mr.requestData(); } catch (e) {}
+      try { if (mr.state !== 'inactive') mr.stop(); } catch (e) { settle({ fallback: true }); }
+    };
+    try { mr.start(100); }
+    catch (e) { settle({ fallback: true }); return; }
+    if (rec.timer) clearTimeout(rec.timer);
+    rec.timer = setTimeout(() => { if (rec.on && rec.stop) rec.stop(); }, REC_MS);
   });
 }
 function recordWav(stream, ms) {
   return new Promise(resolve => {
     const ctx = ensureAudio();
-    const src = ctx.createMediaStreamSource(stream);
-    const proc = ctx.createScriptProcessor(4096, 1, 1);
-    const silent = ctx.createGain();
-    silent.gain.value = 0;
-    const pieces = [];
-    src.connect(proc); proc.connect(silent); silent.connect(ctx.destination);
-    proc.onaudioprocess = e => pieces.push(new Float32Array(e.inputBuffer.getChannelData(0)));
-    let done = false;
-    const finish = async () => {
-      if (done) return;
-      done = true;
-      try { proc.disconnect(); src.disconnect(); silent.disconnect(); } catch (e) {}
-      releaseMic();
-      const b64 = wavB64(pieces, ctx.sampleRate);
-      await judge(b64, 'audio/wav');
-      resolve();
+    if (!ctx) { resolve({ empty: true }); return; }
+    const run = () => {
+      let src, proc, silent;
+      try {
+        src = ctx.createMediaStreamSource(stream);
+        proc = ctx.createScriptProcessor(4096, 1, 1);
+        silent = ctx.createGain();
+        silent.gain.value = 0.00001;
+      } catch (e) { resolve({ empty: true }); return; }
+      const pieces = [];
+      src.connect(proc); proc.connect(silent); silent.connect(ctx.destination);
+      proc.onaudioprocess = e => pieces.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        try { proc.disconnect(); src.disconnect(); silent.disconnect(); } catch (e) {}
+        if (!pieces.length) { resolve({ empty: true }); return; }
+        resolve({ b64: wavB64(pieces, ctx.sampleRate), mime: 'audio/wav' });
+      };
+      rec.stop = finish;
+      if (rec.timer) clearTimeout(rec.timer);
+      rec.timer = setTimeout(() => { if (rec.on) finish(); }, Math.max(400, ms));
     };
-    rec.stop = finish;
-    setTimeout(() => { if (rec.on) finish(); }, ms);
+    if (ctx.state === 'suspended') ctx.resume().then(run).catch(() => resolve({ empty: true }));
+    else run();
   });
 }
 function blobToB64(blob) {
@@ -1444,10 +1958,8 @@ function wavB64(pieces, rate) {
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
 }
-async function judge(b64, mime) {
-  if (!speak) return;
-  const word = speak.word;
-  const gen = speak.gen;
+async function judge(b64, mime, word, gen) {
+  if (!speak || speak.gen !== gen || speak.word !== word) return;
   const status = $('speakStatus');
   if (status) status.textContent = 'Checking…';
   const m = mOf(word);
@@ -1456,8 +1968,8 @@ async function judge(b64, mime) {
     const data = await postAPI({
       action: 'speak', id: S.id, word: word, audio: b64, mime: mime,
       session: S.session, lesson: TT.SETS.findIndex(s => s.id === S.setId) + 1,
-      try: m.says, ms: 3200, mic: ''
-    });
+      try: m.says, ms: REC_MS, mic: ''
+    }, 22000);
     if (!speak || speak.gen !== gen) return;
     if (data && data.silent) {
       setPrompt('Try again.');
