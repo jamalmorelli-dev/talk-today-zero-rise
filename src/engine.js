@@ -6,15 +6,132 @@ const TT = {
     { id: 'teens', name: 'Gateway to the World', code: 'GTTW', series: 'Macmillan Gateway', level: 'Teens A1–A1+', icon: '🌍' },
     { id: 'adults', name: 'Talk Keynote', code: 'KEYNOTE', series: 'National Geographic Keynote & Voices', level: 'Adults A1–A2', icon: '💼' }
   ],
+  CEFR: [
+    { id: 'pre-a1', code: 'PRE-A1', label: 'PRE-A1', name: 'Starter Foundations', icon: '📘', book: 'Super Minds 1', publisher: 'Cambridge', cohort: 'Kids 4–8 · Zero Level' },
+    { id: 'pre-a1-a1', code: 'PRE-A1–A1', label: 'PRE-A1 → A1', name: 'Elementary Bridge', icon: '🌍', book: 'Gateway to the World', publisher: 'Macmillan', cohort: 'Upper Kids & Teens 9–14' },
+    { id: 'a1-a1plus', code: 'A1–A1+', label: 'A1 → A1+', name: 'Everyday Fluency', icon: '💼', book: 'Talk Keynote', publisher: 'National Geographic', cohort: 'Teens 15+ & Adults' }
+  ],
   SETS: [
-    { id: 'class', bookId: 'kids', book: 'Super Minds 1', bookCode: 'SM1', unit: 'Unit 1: At School', name: 'School', words: ['apple', 'banana', 'pen', 'pencil'] },
-    { id: 'outside', bookId: 'kids', book: 'Super Minds 1', bookCode: 'SM1', unit: 'Unit 2: Animals & Nature', name: 'Animals & Nature', words: ['ball', 'cat', 'dog', 'fish', 'tree', 'car'] },
-    { id: 'home', bookId: 'kids', book: 'Super Minds 1', bookCode: 'SM1', unit: 'Unit 3: House & Home', name: 'House & Home', words: ['door', 'window', 'cup', 'bed', 'bag', 'book'] },
-    { id: 'food', bookId: 'teens', book: 'Gateway to the World', bookCode: 'GTTW', unit: 'Unit 3: Snacks & Food', name: 'Snacks & Food', words: ['pizza', 'burger', 'chocolate', 'tomato', 'orange', 'water'] },
-    { id: 'play', bookId: 'teens', book: 'Gateway to the World', bookCode: 'GTTW', unit: 'Unit 4: Sports & Sounds', name: 'Sports & Sounds', words: ['football', 'tennis', 'music', 'camera', 'robot', 'radio'] },
-    { id: 'tech', bookId: 'teens', book: 'Gateway to the World', bookCode: 'GTTW', unit: 'Unit 1: Everyday Tech', name: 'Tech & Streetwear', words: ['headphones', 'computer', 'telephone', 'television', 'sneakers', 'backpack', 'bicycle', 'jacket'] },
-    { id: 'city', bookId: 'adults', book: 'Talk Keynote', bookCode: 'KEYNOTE', unit: 'Unit 1: Transit & Travel', name: 'Transit & Travel', words: ['taxi', 'bus', 'train', 'station', 'airport', 'hotel'] },
-    { id: 'town', bookId: 'adults', book: 'Talk Keynote', bookCode: 'KEYNOTE', unit: 'Unit 2: City Services', name: 'City Services', words: ['hospital', 'doctor', 'police', 'pharmacy', 'bank', 'passport', 'coffee', 'money'] }
+    {
+      id: 'class',
+      cefrId: 'pre-a1',
+      cefr: 'PRE-A1',
+      bookId: 'kids',
+      book: 'Super Minds 1',
+      bookCode: 'SM1',
+      unit: 'Unit 1: At School',
+      lpTitle: 'Schoolbag Treasures & Classroom Objects',
+      lpCode: 'TT-LP-01',
+      teacher: 'Douae / Meriam',
+      cohort: 'PRE-A1 | KIDS 4–8',
+      name: 'School',
+      words: ['apple', 'banana', 'pen', 'pencil']
+    },
+    {
+      id: 'outside',
+      cefrId: 'pre-a1',
+      cefr: 'PRE-A1',
+      bookId: 'kids',
+      book: 'Super Minds 1',
+      bookCode: 'SM1',
+      unit: 'Unit 2: Animals & Nature',
+      lpTitle: 'Animals, Pets & Nature Adventure',
+      lpCode: 'TT-LP-02',
+      teacher: 'Meriam / Douae',
+      cohort: 'PRE-A1 | KIDS 6–9',
+      name: 'Animals & Nature',
+      words: ['ball', 'cat', 'dog', 'fish', 'tree', 'car']
+    },
+    {
+      id: 'home',
+      cefrId: 'pre-a1',
+      cefr: 'PRE-A1',
+      bookId: 'kids',
+      book: 'Super Minds 1',
+      bookCode: 'SM1',
+      unit: 'Unit 3: House & Home',
+      lpTitle: 'My Magical House & Rooms',
+      lpCode: 'TT-LP-03',
+      teacher: 'Lamiae / Douae',
+      cohort: 'PRE-A1 | KIDS 6–11',
+      name: 'House & Home',
+      words: ['door', 'window', 'cup', 'bed', 'bag', 'book']
+    },
+    {
+      id: 'food',
+      cefrId: 'pre-a1-a1',
+      cefr: 'PRE-A1–A1',
+      bookId: 'teens',
+      book: 'Gateway to the World',
+      bookCode: 'GTTW',
+      unit: 'Unit 3: Snacks & Food',
+      lpTitle: 'Food, Drinks & The Restaurant Challenge',
+      lpCode: 'TT-LP-04',
+      teacher: 'Zineb / Lamiae',
+      cohort: 'PRE-A1–A1 | TEENS 12–14',
+      name: 'Snacks & Food',
+      words: ['pizza', 'burger', 'chocolate', 'tomato', 'orange', 'water']
+    },
+    {
+      id: 'play',
+      cefrId: 'pre-a1-a1',
+      cefr: 'PRE-A1–A1',
+      bookId: 'teens',
+      book: 'Gateway to the World',
+      bookCode: 'GTTW',
+      unit: 'Unit 4: Sports & Sounds',
+      lpTitle: 'Sports, Sounds & Multimedia Adventure',
+      lpCode: 'TT-LP-05',
+      teacher: 'Adnane / Lamiae',
+      cohort: 'PRE-A1–A1 | UPPER KIDS 9–11',
+      name: 'Sports & Sounds',
+      words: ['football', 'tennis', 'music', 'camera', 'robot', 'radio']
+    },
+    {
+      id: 'tech',
+      cefrId: 'pre-a1-a1',
+      cefr: 'PRE-A1–A1',
+      bookId: 'teens',
+      book: 'Gateway to the World',
+      bookCode: 'GTTW',
+      unit: 'Unit 1: Everyday Tech',
+      lpTitle: 'Everyday Tech & Streetwear Essentials',
+      lpCode: 'TT-LP-06',
+      teacher: 'Adnane / Souhir',
+      cohort: 'PRE-A1–A1 | TEENS 13–16',
+      name: 'Tech & Streetwear',
+      words: ['headphones', 'computer', 'telephone', 'television', 'sneakers', 'backpack', 'bicycle', 'jacket']
+    },
+    {
+      id: 'city',
+      cefrId: 'a1-a1plus',
+      cefr: 'A1–A1+',
+      bookId: 'adults',
+      book: 'Talk Keynote',
+      bookCode: 'KEYNOTE',
+      unit: 'Unit 1: Transit & Travel',
+      lpTitle: 'Transit, Travel & Exploring Our City',
+      lpCode: 'TT-LP-07',
+      teacher: 'Souhir / Adnane',
+      cohort: 'A1–A1+ | TEENS & ADULTS',
+      name: 'Transit & Travel',
+      words: ['taxi', 'bus', 'train', 'station', 'airport', 'hotel']
+    },
+    {
+      id: 'town',
+      cefrId: 'a1-a1plus',
+      cefr: 'A1–A1+',
+      bookId: 'adults',
+      book: 'Talk Keynote',
+      bookCode: 'KEYNOTE',
+      unit: 'Unit 2: City Services',
+      lpTitle: 'Places in Town, Healthcare & City Services',
+      lpCode: 'TT-LP-08',
+      teacher: 'Souhir / Meriam',
+      cohort: 'A1–A1+ | ADULTS 18+',
+      name: 'City Services',
+      words: ['hospital', 'doctor', 'police', 'pharmacy', 'bank', 'passport', 'coffee', 'money']
+    }
   ],
   GROUPS: {
     food: ['apple', 'banana', 'pizza', 'burger', 'chocolate', 'tomato', 'orange', 'water', 'coffee'],
@@ -54,6 +171,20 @@ TT.bookOfSet = function (setId) {
 
 TT.setsByBook = function (bookId) {
   return TT.SETS.filter(s => s.bookId === bookId);
+};
+
+TT.cefrById = function (cefrId) {
+  for (let i = 0; i < TT.CEFR.length; i++) if (TT.CEFR[i].id === cefrId) return TT.CEFR[i];
+  return TT.CEFR[0];
+};
+
+TT.cefrOfSet = function (setId) {
+  const s = TT.setById(setId);
+  return TT.cefrById(s.cefrId);
+};
+
+TT.setsByCefr = function (cefrId) {
+  return TT.SETS.filter(s => s.cefrId === cefrId);
 };
 
 TT.groupOf = function (word) {

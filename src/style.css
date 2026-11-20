@@ -144,80 +144,226 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
   padding: 10px 12px 24px; overflow-y: auto; z-index: 10;
 }
 
-/* Course Book Navigation */
+/* CEFR & Talk Today Lesson Plan Navigation */
 .coursebook-nav {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   margin-bottom: 4px;
 }
 
-.book-pills {
+.cefr-pills {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   overflow-x: auto;
   scrollbar-width: none;
   padding: 2px 0;
 }
-.book-pills::-webkit-scrollbar { display: none; }
+.cefr-pills::-webkit-scrollbar { display: none; }
 
-.book-pill {
+.cefr-pill {
   flex: 1 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  min-height: 36px;
-  padding: 4px 10px;
+  min-height: 32px;
+  padding: 3px 8px;
   border-radius: 999px;
   background: var(--bg-surface);
   border: 1px solid var(--border-glass);
   color: #94a3b8;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
-.book-pill:hover {
+.cefr-pill:hover {
   color: #fff;
   border-color: rgba(255, 255, 255, 0.25);
 }
-.book-pill.active {
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(16, 185, 129, 0.15));
+.cefr-pill.active {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.22), rgba(16, 185, 129, 0.18));
   border-color: var(--teal-neon);
   color: #ffffff;
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
 }
-.book-pill .book-icon {
-  font-size: 14px;
+.cefr-pill-badge {
+  background: rgba(0, 240, 255, 0.18);
+  color: var(--teal-neon);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
 }
-.book-pill .book-title {
-  font-size: 11.5px;
+.cefr-pill.active .cefr-pill-badge {
+  background: var(--teal-neon);
+  color: #070a13;
+}
+.cefr-pill-title {
+  font-size: 10.5px;
   letter-spacing: 0.2px;
 }
 
-.unit-badge {
+/* Talk Today Lesson Plan Interactive Banner */
+.lp-card-banner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  background: rgba(15, 23, 42, 0.72);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.lp-card-banner:hover {
+  background: rgba(30, 41, 59, 0.88);
+  border-color: rgba(0, 240, 255, 0.45);
+}
+.lp-badge-row {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.lp-pill-level {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.lp-pill-code {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fde047;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.lp-pill-cohort {
   color: #94a3b8;
-  padding: 3px 8px;
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  letter-spacing: 0.2px;
-}
-.unit-badge strong {
-  color: #f1f5f9;
-  font-weight: 700;
-}
-.unit-badge span {
-  color: var(--teal-neon);
+  font-size: 9px;
   font-weight: 600;
+}
+.lp-title-row {
+  font-size: 13px;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1.25;
+  margin-top: 1px;
+}
+.lp-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #94a3b8;
+}
+.lp-sub-row span {
+  color: var(--teal-neon);
+}
+.lp-sub-row small {
+  color: #e2e8f0;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Lesson Plan Modal / Inspection Sheet */
+.lp-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #f8fafc;
+  max-height: 75vh;
+  overflow-y: auto;
+  text-align: left;
+}
+.lp-modal-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.lp-badge-cefr {
+  background: var(--teal-neon);
+  color: #030712;
+  font-weight: 900;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.lp-badge-code {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fde047;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.lp-modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+.lp-modal-meta {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+.lp-meta-row strong {
+  color: var(--teal-neon);
+}
+.lp-modal-vocab-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.lp-modal-vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.lp-modal-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  padding: 6px;
+  cursor: pointer;
+  color: #fff;
+}
+.lp-modal-word:hover {
+  border-color: var(--teal-neon);
+  transform: scale(1.04);
+}
+.lp-modal-word img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.lp-modal-word span {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: capitalize;
 }
 
 .set-bar {
@@ -234,9 +380,9 @@ button, .pillar-card, .find-tile, .mem-card { touch-action: manipulation; }
 .set-chip img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .set-chip.active { border-color: var(--teal-neon); box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.35); }
 .set-chip.done { border-color: var(--emerald); }
-.set-chip.other-book { opacity: 0.4; filter: grayscale(0.5); }
-.set-chip.other-book:hover { opacity: 0.85; filter: grayscale(0); }
-.set-chip.in-book { opacity: 1; }
+.set-chip.other-book, .set-chip.other-cefr { opacity: 0.4; filter: grayscale(0.5); }
+.set-chip.other-book:hover, .set-chip.other-cefr:hover { opacity: 0.85; filter: grayscale(0); }
+.set-chip.in-book, .set-chip.in-cefr { opacity: 1; }
 
 .set-chip-tag {
   position: absolute;

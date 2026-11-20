@@ -621,14 +621,53 @@ function speakBoard(words) {
     if (my === boardGen) root.querySelectorAll('.done-pic').forEach(n => n.classList.remove('on'));
   })();
 }
+function showLessonPlanModal(set) {
+  const wordsGrid = set.words.map(w =>
+    '<button type="button" class="lp-modal-word" data-word="' + w + '" aria-label="' + w + '">' +
+      '<img src="' + CFG.ASSET + 'img/' + w + '.jpg" alt="">' +
+      '<span>' + w + '</span>' +
+    '</button>'
+  ).join('');
+
+  showSheet(
+    '<div class="lp-modal-content">' +
+      '<div class="lp-modal-header">' +
+        '<span class="lp-badge-cefr">' + set.cefr + '</span>' +
+        '<span class="lp-badge-code">' + set.lpCode + '</span>' +
+      '</div>' +
+      '<h2 class="lp-modal-title">' + set.lpTitle + '</h2>' +
+      '<div class="lp-modal-meta">' +
+        '<div class="lp-meta-row"><strong>Course Book:</strong> ' + set.book + ' · ' + set.unit + '</div>' +
+        '<div class="lp-meta-row"><strong>Talk Today Cohort:</strong> ' + set.cohort + '</div>' +
+        '<div class="lp-meta-row"><strong>Teacher Precedent:</strong> ' + set.teacher + ' (Talk Today Fes)</div>' +
+        '<div class="lp-meta-row"><strong>Pedagogy:</strong> 118 BPM Rassias zero-reading immersion & AI Speech</div>' +
+      '</div>' +
+      '<div class="lp-modal-vocab-label">Target Lesson Vocabulary (' + set.words.length + ' words):</div>' +
+      '<div class="lp-modal-vocab-grid">' + wordsGrid + '</div>' +
+      '<button class="btn-next icon-next" type="button" data-act="next" aria-label="Resume Lesson">' +
+        '✓ Resume Lesson' +
+      '</button>' +
+    '</div>'
+  );
+
+  sheetCard.querySelectorAll('.lp-modal-word').forEach(b => b.onclick = () => {
+    playUrls([voiceClip(b.dataset.word)]);
+  });
+
+  sheetCard.querySelector('[data-act=next]').onclick = () => {
+    hideSheet();
+  };
+}
+
 function chrome(extra) {
   const set = curSet();
-  const curBook = TT.bookOfSet(set.id) || TT.BOOKS[0];
+  const curCefr = (TT.cefrOfSet && TT.cefrOfSet(set.id)) || TT.CEFR[0];
 
-  const bookTabs = TT.BOOKS.map(b => {
-    const active = b.id === curBook.id ? ' active' : '';
-    return '<button type="button" class="book-pill' + active + '" data-book="' + b.id + '">' +
-      '<span class="book-icon">' + b.icon + '</span><span class="book-title">' + b.name + '</span>' +
+  const cefrTabs = TT.CEFR.map(c => {
+    const active = c.id === curCefr.id ? ' active' : '';
+    return '<button type="button" class="cefr-pill' + active + '" data-cefr="' + c.id + '" title="' + c.name + ' · ' + c.book + '">' +
+      '<span class="cefr-pill-badge">' + c.label + '</span>' +
+      '<span class="cefr-pill-title">' + c.name + '</span>' +
     '</button>';
   }).join('');
 
@@ -636,9 +675,9 @@ function chrome(extra) {
     const icon = s.words[0];
     const done = S.setCleared[s.id] ? ' done' : '';
     const active = s.id === set.id ? ' active' : '';
-    const inBook = s.bookId === curBook.id ? ' in-book' : ' other-book';
-    const tag = s.unit ? s.unit.split(':')[0].replace('Unit ', 'U') : '';
-    return '<button type="button" class="set-chip' + active + done + inBook + '" data-set="' + s.id + '" title="' + s.book + ' · ' + s.unit + '" aria-label="' + s.name + '">' +
+    const inCefr = s.cefrId === curCefr.id ? ' in-cefr' : ' other-cefr';
+    const tag = s.lpCode ? s.lpCode.replace('TT-', '') : (s.unit ? s.unit.split(':')[0].replace('Unit ', 'U') : '');
+    return '<button type="button" class="set-chip' + active + done + inCefr + '" data-set="' + s.id + '" title="' + s.cefr + ' · ' + s.lpTitle + ' (' + s.book + ')" aria-label="' + s.name + '">' +
       '<img src="' + CFG.ASSET + 'img/' + icon + '.jpg" alt="">' +
       (tag ? '<span class="set-chip-tag">' + tag + '</span>' : '') +
       '</button>';
@@ -650,8 +689,16 @@ function chrome(extra) {
   }).join('');
 
   return '<div class="coursebook-nav">' +
-    '<div class="book-pills">' + bookTabs + '</div>' +
-    '<div class="unit-badge"><strong>' + curBook.icon + ' ' + set.book + '</strong> · <span>' + set.unit + '</span></div>' +
+    '<div class="cefr-pills" role="tablist">' + cefrTabs + '</div>' +
+    '<button type="button" class="lp-card-banner" id="lpInfoBtn" title="Inspect Talk Today Lesson Plan">' +
+      '<div class="lp-badge-row">' +
+        '<span class="lp-pill-level">' + set.cefr + '</span>' +
+        '<span class="lp-pill-code">' + set.lpCode + '</span>' +
+        '<span class="lp-pill-cohort">' + (set.cohort ? set.cohort.split('|')[0].trim() : '') + '</span>' +
+      '</div>' +
+      '<div class="lp-title-row">' + set.lpTitle + '</div>' +
+      '<div class="lp-sub-row"><span>' + set.book + ' · ' + set.unit + '</span> <small>ℹ️ Plan</small></div>' +
+    '</button>' +
     '<div class="set-bar">' + chips + '</div>' +
     '</div>' +
     '<div class="pips">' + pips + '</div>' +
@@ -659,9 +706,9 @@ function chrome(extra) {
 }
 function bindSets(render) {
   watchImages(stage);
-  stage.querySelectorAll('.book-pill').forEach(b => b.onclick = () => {
-    const targetBook = b.dataset.book;
-    const sets = TT.setsByBook(targetBook);
+  stage.querySelectorAll('.cefr-pill').forEach(b => b.onclick = () => {
+    const targetCefr = b.dataset.cefr;
+    const sets = TT.setsByCefr(targetCefr);
     if (sets.length > 0) {
       S.setId = sets[0].id;
       save(false);
@@ -674,6 +721,8 @@ function bindSets(render) {
     save(false);
     render();
   });
+  const lpBtn = stage.querySelector('#lpInfoBtn');
+  if (lpBtn) lpBtn.onclick = () => showLessonPlanModal(curSet());
 }
 function showDone(set, advance) {
   const pics = set.words.map(w =>
